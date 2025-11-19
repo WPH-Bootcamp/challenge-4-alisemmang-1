@@ -17,6 +17,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "prompt-sync": "^4.2.0",
     "readline-sync": "^1.4.10"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WPH-Bootcamp/challenge-4-alisemmang-1.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WPH-Bootcamp/challenge-4-alisemmang-1/issues"
+  },
+  "homepage": "https://github.com/WPH-Bootcamp/challenge-4-alisemmang-1#readme"
 }
