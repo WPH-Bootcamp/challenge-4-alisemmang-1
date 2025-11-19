@@ -20,6 +20,7 @@ class StudentManager {
   
   constructor() {
     // Implementasi constructor di sini
+    this.students = [];
   }
 
   /**
@@ -30,6 +31,11 @@ class StudentManager {
    */
   addStudent(student) {
     // Implementasi method di sini
+    if (this.students.some(s => s.id === student.id)) {
+      return false; // ID sudah ada
+    }
+    this.students.push(student);
+    return true;
   }
 
   /**
@@ -40,8 +46,21 @@ class StudentManager {
    */
   removeStudent(id) {
     // Implementasi method di sini
-  }
+    const initialLength = this.students.length;
+  
+    // Temukan index siswa
+    const index = this.students.findIndex(s => s.id === id);
 
+    if (index !== -1) {
+        // Hapus siswa dari array
+        this.students.splice(index, 1);
+        return true;
+    }
+    return false;
+  }
+  
+
+  
   /**
    * Mencari siswa berdasarkan ID
    * @param {string} id - ID siswa yang dicari
@@ -50,6 +69,9 @@ class StudentManager {
    */
   findStudent(id) {
     // Implementasi method di sini
+    // TODO: Gunakan method array untuk mencari siswa
+    const student = this.students.find(s => s.id === id);
+    return student || null;
   }
 
   /**
@@ -61,6 +83,15 @@ class StudentManager {
    */
   updateStudent(id, data) {
     // Implementasi method di sini
+    const student = this.findStudent(id);
+
+    if (student) {
+      // TODO: Cari siswa dan update propertinya
+      if (data.name) student.name = data.name;
+      if (data.class) student.class = data.class;
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -69,6 +100,7 @@ class StudentManager {
    */
   getAllStudents() {
     // Implementasi method di sini
+    return this.students;
   }
 
   /**
@@ -79,6 +111,18 @@ class StudentManager {
    */
   getTopStudents(n) {
     // Implementasi method di sini
+    if (this.students.length === 0) {
+        return [];
+    }
+    
+    // TODO: Sort siswa berdasarkan rata-rata (descending) dan ambil n teratas
+    // Menggunakan spread operator ([...this.students]) untuk menghindari perubahan pada array asli
+    const sortedStudents = [...this.students].sort((a, b) => {
+        // Asumsi Class Student memiliki method getAverage()
+        return b.getAverage() - a.getAverage(); 
+    });
+
+    return sortedStudents.slice(0, n);
   }
 
   /**
@@ -87,6 +131,22 @@ class StudentManager {
    */
   displayAllStudents() {
     // Implementasi method di sini
+    if (this.students.length === 0) {
+      console.log("\n[!] Belum ada data siswa.");
+      return;
+    }
+    
+    console.log("\n--- DAFTAR SEMUA SISWA ---");
+    // Menampilkan header tabel
+    console.log("ID   | Nama                  | Kelas | Rata-rata | Status");
+    console.log("-----|-----------------------|-------|-----------|--------");
+    
+    // Loop semua siswa dan tampilkan ringkasan info
+    this.students.forEach(s => {
+        // Menggunakan padEnd() untuk merapikan tampilan
+        console.log(`${s.id.toString().padEnd(4)} | ${s.name.padEnd(21)} | ${s.class.padEnd(5)} | ${s.getAverage().toString().padEnd(9)} | ${s.getGradeStatus()}`);
+    });
+    console.log("----------------------------------------------------------");
   }
 
   /**
@@ -96,6 +156,7 @@ class StudentManager {
    */
   getStudentsByClass(className) {
     // Implementasi method di sini (BONUS)
+    return this.students.filter(s => s.class.toLowerCase() === className.toLowerCase());
   }
 
   /**
@@ -105,6 +166,28 @@ class StudentManager {
    */
   getClassStatistics(className) {
     // Implementasi method di sini (BONUS)
+    const classStudents = this.getStudentsByClass(className);
+
+    if (classStudents.length === 0) {
+        return null;
+    }
+
+    const totalStudents = classStudents.length;
+    const totalAverageScore = classStudents.reduce((sum, s) => sum + s.getAverage(), 0);
+    const classAverage = totalAverageScore / totalStudents;
+
+    // Hitung jumlah yang Lulus
+    const passedStudents = classStudents.filter(s => s.getGradeStatus() === 'Lulus').length;
+    const failedStudents = totalStudents - passedStudents;
+
+    return {
+        className: className,
+        totalStudents: totalStudents,
+        classAverage: Math.round(classAverage * 100) / 100, // Pembulatan 2 desimal
+        passedStudents: passedStudents,
+        failedStudents: failedStudents,
+        passRate: Math.round((passedStudents / totalStudents) * 100)
+    };
   }
 }
 
