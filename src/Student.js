@@ -12,6 +12,8 @@
  * Kriteria Lulus: rata-rata >= 75
  */
 
+const MIN_LULUS_SCORE = 75;
+
 class Student {
   // TODO: Implementasikan constructor
   // Properti yang dibutuhkan:
@@ -22,6 +24,10 @@ class Student {
   
   constructor(id, name, studentClass) {
     // Implementasi constructor di sini
+    this.id = id;
+    this.name = name;
+    this.class = studentClass;
+    this.grades = {}; // Object untuk menyimpan nilai {subject: score}
   }
 
   /**
@@ -32,6 +38,11 @@ class Student {
    */
   addGrade(subject, score) {
     // Implementasi method di sini
+    if (typeof score === 'number' && score >= 0 && score <= 100) {
+        this.grades[subject] = score;
+        return true;
+    }
+    return false;
   }
 
   /**
@@ -41,6 +52,16 @@ class Student {
    */
   getAverage() {
     // Implementasi method di sini
+    const scores = Object.values(this.grades);
+   if (scores.length === 0) {
+        return 0; 
+  }
+  // TODO: Hitung total nilai dibagi jumlah mata pelajaran
+    const total = scores.reduce((sum, score) => sum + score, 0);
+    const average = total / scores.length;
+    
+    // Membulatkan 2 angka di belakang koma
+    return Math.round(average * 100) / 100;
   }
 
   /**
@@ -50,6 +71,8 @@ class Student {
    */
   getGradeStatus() {
     // Implementasi method di sini
+    const average = this.getAverage();
+    return average >= MIN_LULUS_SCORE ? "Lulus" : "Tidak Lulus";
   }
 
   /**
@@ -58,6 +81,25 @@ class Student {
    */
   displayInfo() {
     // Implementasi method di sini
+    const avg = this.getAverage();
+    const status = this.getGradeStatus();
+
+    console.log(`\n--- Info Siswa: ${this.name} (${this.id}) ---`);
+    console.log(`Kelas: ${this.class}`);
+    console.log(`Rata-Rata Nilai: ${avg}`);
+    console.log(`Status: ${status} (Kriteria Lulus: >= ${MIN_LULUS_SCORE})`);
+    console.log("Detail Nilai:");
+
+    const subjects = Object.keys(this.grades);
+    if (subjects.length > 0) {
+        subjects.forEach(subject => {
+            console.log(`  - ${subject}: ${this.grades[subject]}`);
+        });
+    } else {
+        console.log("  - Belum ada nilai.");
+    }
+    console.log("----------------------------------");
+ 
   }
 }
 
